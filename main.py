@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 
 import argparse
 import re
-
+import unicodedata
 
 cmd_parser = argparse.ArgumentParser(description="Parse ofx files from Banco do Brasil to simplify description")
 cmd_parser.add_argument("input", help="Input file")
@@ -19,7 +20,8 @@ cleanup_patterns = [re.compile(xml_entry % p) for p in (payment_regex, transfer_
 
 print "Reading file"
 with open(args.input, 'r') as myfile:
-	original_data=myfile.read()
+	original_data=unicodedata.normalize('NFD',
+		myfile.read().decode('iso-8859-1')).encode('ascii', 'ignore')
 
 def replace(match):
 	memo = match.group(0)
